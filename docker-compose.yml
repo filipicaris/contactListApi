@@ -1,0 +1,23 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  database:
+    image: mongo
+    restart: always
+    container_name: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - ./docker/data:/data
+      - ./docker/scripts:/scripts
+    environment:
+      MONGODB_USERNAME: admin
+      MONGODB_PASSWORD: pass
+      MONGODB_DATABASE: database
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
