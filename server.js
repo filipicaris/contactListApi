@@ -1,15 +1,19 @@
 // This will setup my server so the communication with my REST api should work smoothly
 var bodyParser = require('body-parser');
+var Firebase = require('./Firebase');
 var Database = require('./Database');
 var express = require('express');
 var Router = require('./Router');
+var config = require('config');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-var db = Database.getConnection();
-db.on('error', Database.handleError());
+Firebase.initFirebaseRef();
+
+var db = Database.getDatabaseConnection(config.DBHost);
+db.on('error', Database.handleError);
 db.once('open', () => {
     var userRouter = Router.getUserRouter(express);
     var loginRouter = Router.getLoginRouter(express);
@@ -24,3 +28,5 @@ db.once('open', () => {
     var port = process.env.PORT || 8080; 
     app.listen(port);
 });
+
+module.exports = app;

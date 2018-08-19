@@ -1,18 +1,16 @@
 var mongoose = require('mongoose');
 
 var Database = {
-    server: 'localhost:27017',
-    name: 'database',
     options: {
         socketTimeoutMS: 30000,
         keepAlive: true,
         reconnectTries: 30000,
         useNewUrlParser: true,
-        user: 'admin', pass:'pass'
+        user: 'admin', pass:'pass',
     },
     
-    getDatabase() {
-        mongoose.connect(`mongodb://${server}/${name}`, options)
+    getDatabaseConnection(dbhostURL) {
+        mongoose.connect(dbhostURL, this.options);
         return mongoose.connection;
     },
 

@@ -1,26 +1,41 @@
-var Contact = require("../models/Contact.js")
-var JWTService = require("./JWTService.js")
-var LoginService = require("./LoginService.js")
+var Contact = require("../models/Contact.js");
+var JWTService = require("./JWTService.js");
+var ResponseService = require("./ResponseService.js");
+var LoginService = require("./LoginService.js");
+var EncryptionService = require("./EncryptionService.js");
+var Firebase = require("../Firebase.js");
 
 var ContactsService = {
-    createContact(req, res, firebaseRef) {
-        let { name, email, phone } = req.body;
-        let userEmail = JWTService.decode(LoginService.getToken(req)).email;
 
-        let contact = Contact.new(name, email, phone, userEmail)
+    createContact(req, res) {
+        let {
+            name,
+            email,
+            phone
+        } = req.body;
+        try {
+            let contact = Contact.new(name, email, phone);
 
-        var contactsRef = firebaseRef.child("contacts");
-        contactsRef.set(contact)
-            .then(() => {
-                res.json(contact)
-            })
-            .catch((err) => {
-                this.error(res, err)
-            });
-    },
+            var contactsReference = Firebase.getDatabase().ref("contact-list-api");
+            var newContactKey = contactsReference.child("contacts").push().key;
 
-    error(res, err) {
-        res.send(err)
+            let jwtPayload = JWTService.decode(LoginService.getToken(req));
+            let encryptedEmail = EncryptionService.encryptText(jwtPayload.email);
+
+            var updates = {};
+            updates['/user-contacts/' + encryptedEmail + '/' + newContactKey] = contact;
+
+            contactsReference
+                .update(updates)
+                .then(() => {
+                    ResponseService.success(res, contact, true);
+                })
+                .catch(err => {
+                    ResponseService.error(res, err);
+                });
+        } catch (err) {
+            ResponseService.error(res, err);
+        }
     }
 }
 

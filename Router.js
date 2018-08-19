@@ -1,55 +1,62 @@
-var Firebase = require('./Firebase')
-var LoginService = require('./services/LoginService')
+var Firebase = require('./Firebase');
+var LoginService = require('./services/LoginService');
 var User = require('./models/User');
-var UserService = require('./UserService')
+var UserService = require('./services/UserService');
+var ContactsService = require('./services/ContactsService');
 
 var Router = {
 
-    getUserRouter() {
+    getUserRouter(express) {
         var router = express.Router();
 
-        router.use(function (req, res, next) {
-            console.log('The User Router was called');
+        router.use( (req, res, next) => {
             next();
         });
 
-        router.get('/', function (req, res) {
-            console.log("'/'was called, but there's no API for this entrypoint");
+        router.get('/',  (req, res) => {
+            // TODO REMOVE ACTION
+            UserService.getAllUsers(req, res);
         });
 
         router.route('/register')
-            .post(function (req, res) {
+            .post( (req, res) => {
                 UserService.saveUser(req, res);
-            })
+            });
+
+        return router;
     },
 
-    getLoginRouter() {
+    getLoginRouter(express) {
         var router = express.Router();
 
-        router.use(function (req, res, next) {
-            console.log('The Login Router was called');
+        router.use((req, res, next) => {
             next();
         });
 
-        router.get('/', function (req, res) {
+        router.post('/', (req, res) => {
             LoginService.login(req, res);
         });
+
+        return router;
     },
 
-    getApiRouter() {
+    getApiRouter(express, firebaseRef) {
         var router = express.Router();
 
-        router.use(function (req, res, next) {
+        router.use((req, res, next) => {
             // Let's check if user is logged in
-            LoginService.validateLogin(req, res);
-            next();
+            var isValid = LoginService.validateLogin(req, res);
+            if(isValid){
+                next();
+            }
         });
 
         router.route('/contact')
             .post(function (req, res) {
-                var firebaseRef = Firebase.getFirebaseRef();
                 ContactsService.createContact(req, res, firebaseRef);
             });
+
+        return router;
 
     }
 }

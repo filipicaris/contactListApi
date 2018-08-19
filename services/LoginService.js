@@ -1,17 +1,20 @@
-var UserService = require('./UserService')
-var EncryptionService = require('./EncryptionService')
-var JWTService = require('./JWTService')
+var UserService = require('./UserService');
+var EncryptionService = require('./EncryptionService');
+var JWTService = require('./JWTService');
+var ResponseService = require("./ResponseService.js");
 
 var LoginService = {
     login(req, res) {
-        contact.email = req.body.email;
-        contact.password = req.body.password;
-        let user = UserService.getUserFromDB(email, password);
-        if (!user) {
-            this.error(user)
-        } else {
-            JWTService.sign(user);
-        }
+        let {email, password} = req.body;
+        UserService.getUserFromDB(email, password, (err, user) => {
+            if (err) {
+                ResponseService.error(res, err);
+            } if(!user){
+                ResponseService.unauthorized(res, "User not found");
+            } else {
+                JWTService.sign(res, user);
+            }
+        });
     },
 
     getToken(req) {
@@ -24,16 +27,10 @@ var LoginService = {
         }
     },
 
-    error(res, user) {
-        //TODO
-    },
-
     validateLogin(req, res) {
         var token = this.getToken(req);
-        var user = JWTService.verify(token, (err) => {
-            this.error(res, err);
-        });
-        return user;
+        var user = JWTService.verify(res, token);
+        return user != null;
     }
 }
 

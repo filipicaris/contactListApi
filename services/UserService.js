@@ -1,14 +1,33 @@
-var EncryptionService = require('./EncryptionService')
-var JWTService = require('./JWTService')
-var LoginService = require('./LoginService')
-var User = require('../models/User')
+var EncryptionService = require('./EncryptionService');
+var JWTService = require('./JWTService');
+var LoginService = require('./LoginService');
+var User = require('../models/User');
+var ResponseService = require("./ResponseService.js");
 
 var UserService = {
 
-    getUserFromDB(email, password) {
+    saveUser(req, res) {
+        var encryptedPassword = EncryptionService.encryptText(req.body.password);
+        
+        var newUser = new User();
+        newUser.name = req.body.name;
+        newUser.email = req.body.email;
+        newUser.password = encryptedPassword;
+        
+        //Save it into the DB.
+        newUser.save((err, user) => {
+            if(err) {
+                ResponseService.error(res, err);
+            }
+            else {
+                ResponseService.success(res, user, true);
+            }
+        });
+    },
+
+    getUserFromDB(email, password, callback) {
         var encryptedPassword = EncryptionService.encryptText(password);
-        let user = await User.findOne({ email, password: encryptedPassword })
-        return user;
+        User.where({ email, password: encryptedPassword }).findOne(callback);
     },
 
     getLoggedUserEmail(req) {

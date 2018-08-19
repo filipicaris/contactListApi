@@ -1,22 +1,32 @@
-var jwt = require('jsonwebtoken')
+var jwt = require('jsonwebtoken');
+var ResponseService = require("./ResponseService.js");
 
 var JWTService = {
-    SECRET: "FILIPICARIS", //secret used to create jwt
+    SECRET: "Fi%li%pi%Ca%ri%s@STRV", //secret used to create jwt
 
     options: {
         expiresIn: '1h', // jwt will expire by default in 1 hour
         algorithm: 'HS256' //using default
     },
 
-    sign(user) {
-        return jwt.sign(user, this.SECRET);
+    sign(res, user) {
+        var payload = {
+            name: user.name,
+            email: user.email,
+            password: user.password
+        }
+        var token = jwt.sign(payload, this.SECRET, this.options);
+        ResponseService.success(res, {
+            auth: true,
+            token: token
+        }, true);
     },
 
-    verify(token, errCallback) {
+    verify(res, token) {
         try {
-            return jwt.verify(token, this.SECRET)
+            return jwt.verify(token, this.SECRET);
         } catch (err) {
-            errCallback(err)
+            ResponseService.error(res,err);
         }
     },
 
