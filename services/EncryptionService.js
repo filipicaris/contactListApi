@@ -21,6 +21,10 @@ var EncryptionService = {
         let key = hash.digest().slice(0, 16);
         let decipher = crypto.createDecipheriv(this.encryptionAlgorithm, key, iv);
         return decipher.update(encryptedText);
+    },
+
+    createHashMD5(text){
+        return crypto.createHash('md5').update(text).digest("hex");
     }
 }
 

@@ -20,10 +20,10 @@ var ContactsService = {
             var newContactKey = contactsReference.child("contacts").push().key;
 
             let jwtPayload = JWTService.decode(LoginService.getToken(req));
-            let encryptedEmail = EncryptionService.encryptText(jwtPayload.email);
+            let emailAsMD5 = EncryptionService.createHashMD5(jwtPayload.email);
 
             var updates = {};
-            updates['/user-contacts/' + encryptedEmail + '/' + newContactKey] = contact;
+            updates['/user-contacts/' + emailAsMD5 + '/' + newContactKey] = contact;
 
             contactsReference
                 .update(updates)
