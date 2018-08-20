@@ -5,8 +5,7 @@ var Database = {
         socketTimeoutMS: 30000,
         keepAlive: true,
         reconnectTries: 30000,
-        useNewUrlParser: true,
-        user: 'admin', pass:'pass',
+        useNewUrlParser: true
     },
     
     getDatabaseConnection(dbhostURL) {
@@ -14,7 +13,7 @@ var Database = {
         return mongoose.connection;
     },
 
-    handleError() {
+    handleError(err) {
         console.error.bind(console, 'Connection Error:')
     }
 }
