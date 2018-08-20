@@ -30,7 +30,7 @@ describe('Login', () => {
         });
     });
     describe('/POST login with wrong user', () => {
-        it('register with user A', (done) => {
+        it('it should register user A', (done) => {
             chai.request(server)
                 .post('/user/register')
                 .send({
@@ -43,7 +43,7 @@ describe('Login', () => {
                     done()
                 });
         });
-        it('login with A', (done) => {
+        it('it should log in with user A', (done) => {
             chai.request(server)
                 .post('/login')
                 .send({
@@ -55,7 +55,7 @@ describe('Login', () => {
                     done();
                 });
         });
-        it('login with b', (done) => {
+        it('it should failt to log in with user B', (done) => {
             chai.request(server)
                 .post('/login')
                 .send({
