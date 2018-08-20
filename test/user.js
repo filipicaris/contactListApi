@@ -30,20 +30,20 @@ describe('Users', () => {
             done();
         });
     });
-    // describe('/POST user', () => {
-    //     it('it should register one user', (done) => {
-    //         chai.request(server)
-    //             .post('/user/register')
-    //             .send({
-    //                 name: "Filipi Caris dos Santos",
-    //                 email: "filipi.caris@me.com",
-    //                 password: "mudar123"
-    //             })
-    //             .end((err, res) => {
-    //                 res.should.have.status(200);
-    //                 done();
-    //             });
-    //     });
-    // });
+    describe('/POST user', () => {
+        it('it should register one user', (done) => {
+            chai.request(server)
+                .post('/user/register')
+                .send({
+                    name: "Filipi Caris dos Santos",
+                    email: "filipi.caris@me.com",
+                    password: "mudar123"
+                })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+    });
 })
 

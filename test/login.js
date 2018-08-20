@@ -23,26 +23,14 @@ let userB = {
 }
 
 describe('Login', () => {
-    beforeEach((done) => { 
-        User.find({}, (err, users) => {
-            console.log(`Users before deletion = ${users.length}`)
-            done();
-        });
-    });
-    beforeEach((done) => { 
+    before((done) => {
         //Before each test we empty the database
         User.deleteMany({}, (err) => {
             done();
         });
     });
-    beforeEach((done) => { 
-        User.find({}, (err, users) => {
-            console.log(`Users after deletion = ${users.length}`)
-            done();
-        });
-    });
     describe('/POST login with wrong user', () => {
-        it('it should register user A', (done) => {
+        it('register with user A', (done) => {
             chai.request(server)
                 .post('/user/register')
                 .send({
@@ -52,10 +40,22 @@ describe('Login', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(200);
+                    done()
+                });
+        });
+        it('login with A', (done) => {
+            chai.request(server)
+                .post('/login')
+                .send({
+                    email: userA.email,
+                    password: userA.password
+                })
+                .end((err, res) => {
+                    res.should.have.status(200);
                     done();
                 });
         });
-        it('it should fail login using credentials for user B', (done) => {
+        it('login with b', (done) => {
             chai.request(server)
                 .post('/login')
                 .send({
@@ -68,21 +68,4 @@ describe('Login', () => {
                 });
         });
     });
-    // describe('/POST login', () => {
-        
-    // });
-    // describe('/POST login', () => {
-    //     it('it should accept login using credentials for user A', (done) => {
-    //         chai.request(server)
-    //             .post('/login')
-    //             .send({
-    //                 email: userA.email,
-    //                 password: userA.password
-    //             })
-    //             .end((err, res) => {
-    //                 res.should.have.status(401);
-    //                 done();
-    //             });
-    //     });
-    // });
 })

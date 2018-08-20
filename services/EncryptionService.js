@@ -1,21 +1,26 @@
 var crypto = require("crypto");
 
 var EncryptionService = {
-    encryptionAlgorithm: 'aes-256-ctr',
+    encryptionAlgorithm: 'aes-128-cbc',
     encryptionKey: 'filipicaris',
+    IV_LENGTH:16,
 
     encryptText(plainText) {
-        var cipher = crypto.createCipheriv(this.encryptionAlgorithm, this.encryptionKey)
-        var encryptedText = cipher.update(plainText, 'utf8', 'hex')
-        encryptedText += cipher.final('hex');
-        return encryptedText;
+        let iv = crypto.randomBytes(this.IV_LENGTH);
+        const hash = crypto.createHash("sha1");
+        hash.update(this.encryptionKey);
+        let key = hash.digest().slice(0, 16);
+        let cipher = crypto.createCipheriv(this.encryptionAlgorithm, key, iv);
+        return cipher.update(plainText);
     },
 
-    decryptPass(encryptedText) {
-        var decipher = crypto.createDecipheriv(this.encryptionAlgorithm, this.encryptionKey)
-        var plainText = decipher.update(encryptedText, 'hex', 'utf8')
-        plainText += decipher.final('utf8');
-        return plainText;
+    decryptText(encryptedText) {
+        let iv = crypto.randomBytes(this.IV_LENGTH);
+        const hash = crypto.createHash("sha1");
+        hash.update(this.encryptionKey);
+        let key = hash.digest().slice(0, 16);
+        let decipher = crypto.createDecipheriv(this.encryptionAlgorithm, key, iv);
+        return decipher.update(encryptedText);
     }
 }
 
