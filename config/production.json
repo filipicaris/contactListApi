@@ -1,3 +1,6 @@
 {
-    "DBHost": "mongodb://admin:Filipi1234@ds251598.mlab.com:51598/contact-list-api-db"
+    "DBHost": "mongodb://ds251598.mlab.com:51598/contact-list-api-db",
+    "DBUser": "admin",
+    "DBPass": "Filipi1234",
+    "FirebaseReferencePath": "contact-list-api"
 }

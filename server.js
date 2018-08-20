@@ -4,7 +4,6 @@ var Firebase = require('./Firebase');
 var Database = require('./Database');
 var express = require('express');
 var Router = require('./Router');
-var config = require('config');
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -12,7 +11,7 @@ app.use(bodyParser.json());
 
 Firebase.initFirebaseRef();
 
-var db = Database.getDatabaseConnection(config.DBHost);
+var db = Database.getDatabaseConnection();
 db.on('error', Database.handleError);
 db.once('open', () => {
     var userRouter = Router.getUserRouter(express);

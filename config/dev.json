@@ -1,3 +1,6 @@
 {
-    "DBHost": "mongodb://admin:pass@localhost:27017/mytestdatabase"
+    "DBHost": "mongodb://localhost:27017/mytestdatabase",
+    "DBUser": "admin",
+    "DBPass": "pass",
+    "FirebaseReferencePath": "contact-list-api-dev"
 }

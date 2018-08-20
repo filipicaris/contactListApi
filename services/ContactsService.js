@@ -4,6 +4,7 @@ var ResponseService = require("./ResponseService.js");
 var LoginService = require("./LoginService.js");
 var EncryptionService = require("./EncryptionService.js");
 var Firebase = require("../Firebase.js");
+var config = require('config');
 
 var ContactsService = {
 
@@ -16,7 +17,7 @@ var ContactsService = {
         try {
             let contact = Contact.new(name, email, phone);
 
-            var contactsReference = Firebase.getDatabase().ref("contact-list-api");
+            var contactsReference = Firebase.getDatabase().ref(config.FirebaseReferencePath);
             var newContactKey = contactsReference.child("contacts").push().key;
 
             let jwtPayload = JWTService.decode(LoginService.getToken(req));
@@ -28,6 +29,7 @@ var ContactsService = {
             contactsReference
                 .update(updates)
                 .then(() => {
+                    contact._id = newContactKey;
                     ResponseService.success(res, contact, true);
                 })
                 .catch(err => {
